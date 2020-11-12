@@ -35,3 +35,27 @@ class Subject(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.klass}"
+
+
+class Student(models.Model):
+    name = models.CharField(max_length=100)
+    roll = models.IntegerField()
+    klass = models.ForeignKey(Klass, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.name} ({self.roll}) | {self.klass}"
+
+
+class DailyAttendance(models.Model):
+    date = models.DateField(auto_now_add=True)
+    taken_by = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
+    klass = models.ForeignKey(Klass, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    presence = models.BooleanField()
+    on_leave = models.BooleanField(default=False)
+    comment = models.CharField(max_length=200, blank=True)
+
+    def __str__(self):
+        presence = "Present" if self.presence else "Absent"
+        return f"{self.student.roll} is {presence} at {self.date}"
